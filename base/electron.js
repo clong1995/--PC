@@ -32,10 +32,13 @@ module.exports = {
         }, opt));
         win.loadURL(url);
         win.once('ready-to-show', () => {
-            if (opt.max)
-                win.maximize();
-            else
-                win.show();
+            if (opt.autoShow === undefined || opt.autoShow) {
+                if (opt.max)
+                    win.maximize();
+                else
+                    win.show();
+            }
+
             callback(win);
         });
         return win;
@@ -46,6 +49,7 @@ module.exports = {
      * @param ipcToken
      */
     ipc: (ipcToken = 'ipc-token') => {
+        ejs.setGlobal('ipcToken', ipcToken);
         ipcMain.on(ipcToken, (event, route, data = '{}') => {
             let r = route.split('/');
             let md5 = crypto.createHash('md5');
@@ -53,11 +57,20 @@ module.exports = {
             let key = md5.digest('hex').toUpperCase();
             try {
                 require('../application/' + r[0])(r[1], JSON.parse(data), res => {
-                    event.sender.send(ipcToken, key, JSON.stringify({state: 'succ', data: res}));
+                    event.sender.send(ipcToken, key, JSON.stringify({state: 'success', data: res}));
                 });
             } catch (e) {
-                event.sender.send(ipcToken, key, JSON.stringify({state: 'err', msg: e}));
+                event.sender.send(ipcToken, key, JSON.stringify({state: 'fail', msg: e}));
             }
         });
+    },
+
+    /**
+     * 发送消息
+     * @param win
+     * @param data
+     */
+    send: (win, key, data) => {
+        win.webContents.send(ejs.getGlobal('ipcToken'), key, JSON.stringify(data));
     }
 };

@@ -1,7 +1,35 @@
 //伪全局变量
 const globalVar = new Map();
+const http = require('http');
 
 module.exports = {
+    ajax:(url,{
+        port = 80,
+        method = 'POST',
+        data = null,
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        success = null,
+        error = null
+    }={})=>{
+        url =  URL.parse(url);
+        let req = http.request({
+            host: url.hostname,
+            path: url.pathname,
+            port: port,
+            method: method,
+            headers: headers
+        }, res => {
+            res.setEncoding('utf-8');
+            let receiveData = "";
+            res.on('data', data => receiveData += data).on('end', () => callback(JSON.parse(receiveData)));
+        });
+        //发送数据
+        req.write(JSON.stringify(data));
+        req.end();
+    },
+
     /**
      * 获取数组最大最小值
      * @param arr

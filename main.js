@@ -1,34 +1,19 @@
 const ejs = require('./base/EasyScript');
 const elc = require('./base/electron');
-//const db = require('./base/DataBase.class');
-e
-ejs.setGlobal('render', 'https://weixin.cxdgtm.com/pc/');
+//const db = require('./base/DataBase.class');e
+ejs.setGlobal('render', 'https://pc.nurse.juyiyoufu.com/');
 
 elc.ready(() => {
-
-
-
-
-        elc.window(ejs.getGlobal('render') + 'login',{
+        //启动登录窗口
+        elc.window(ejs.getGlobal('render') + 'login', {
             width: 280,
             height: 400,
             frame: false,
             resizable: false,
-            alwaysOnTop:true
-        },e =>{
+            alwaysOnTop: true
+        }, e => {
             ejs.setGlobal('loginWin', e);
         });
-
-
-
-
-
-
-
-
-
-
-
     }
 );
 
