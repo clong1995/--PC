@@ -28,7 +28,7 @@ module.exports = {
         let win = new BrowserWindow(ejs.assignDeep({
             show: false,
             width: 1024,
-            height: 768
+            height: 633
         }, opt));
         win.loadURL(url);
         win.once('ready-to-show', () => {
